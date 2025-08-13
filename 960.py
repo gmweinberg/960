@@ -4,19 +4,30 @@ from itertools import combinations
 from argparse import ArgumentParser
 
 bishop = "♗"
-rkr = "♖♔♖"
-pieces = "♘♘♕"
+knight = "♘"
+queen = "♕"
+king = "♔"
+rook = "♖"
+pawn = "♙"
+
 pos = [i for i in range(8)]
 res = {}
 
 def set_black(black):
     if black:
-        global bishop
+        global bishop, knight, rook, queen, king, pawn
         global rkr
-        global pieces
+        global others
         bishop = "♟"
-        rkr = "♜♚♜"
-        pieces = "♞♞♛"
+        knight = "♞"
+        queen = "♛"
+        king =  "♚"
+        rook = "♜"
+        pawn = "♟"
+
+
+    rkr = rook + king + rook
+    others = knight + knight + queen
 
 def set_bishops():
     """Bishops must go on opposite colors."""
@@ -39,16 +50,39 @@ def set_rkr():
 def set_others():
     shuffle(pos)
     for ii in range(len(pos)):
-        res[pos[ii]] = pieces[ii]
+        res[pos[ii]] = others[ii]
+
+def show_pieces(pieces):
+    pieces = pieces.lower()
+    out = ""
+    for char in pieces:
+        if char == 'k':
+            out += king
+        if char == 'n':
+            out += knight
+        if char == 'r':
+            out += rook
+        if char == 'q':
+            out += queen
+        if char == 'b':
+            out += bishop
+        if char == 'p':
+            out += pawn
+    print(out)
+
 
 if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--black', action='store_true')
+    parser.add_argument('--pieces', help="show specific pieces")
     args = parser.parse_args()
     set_black(args.black)
-    set_bishops()
-    set_rkr()
-    set_others()
+    if args.pieces:
+        show_pieces(args.pieces)
+    else:
+        set_bishops()
+        set_rkr()
+        set_others()
 
     final = "".join([res[key] for key in sorted(res.keys())])
     print(final)
